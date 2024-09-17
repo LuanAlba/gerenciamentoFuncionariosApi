@@ -1,0 +1,6 @@
+@gerenciamentoFuncionariosApi_HostAddress = http://localhost:5090
+
+GET {{gerenciamentoFuncionariosApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
