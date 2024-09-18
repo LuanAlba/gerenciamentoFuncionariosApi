@@ -36,7 +36,34 @@ namespace gerenciamentoFuncionariosApi.Controllers
         [HttpPost]
         public async Task<ActionResult<FuncionarioModel>> CreateFuncionario(FuncionarioModel novoFuncionario)
         {
-            return Ok(await _funcionarioInterface.CreateFuncionario(novoFuncionario));
+            var response = await _funcionarioInterface.CreateFuncionario(novoFuncionario);
+
+            if (!response.Sucesso)
+                return BadRequest(response.Mensagem);
+
+            return Ok(response);
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<ServiceResponse<FuncionarioModel>> GetFuncionarioById(int id)
+        {
+            var response = _funcionarioInterface.GetFuncionarioById(id);
+
+            if (!response.Sucesso)
+                return BadRequest(response.Mensagem);
+
+            return Ok(response);
+        }
+
+        [HttpDelete]
+        public ActionResult<ServiceResponse<FuncionarioModel>> DeleteFuncionario(int id)
+        {
+            var response  = _funcionarioInterface.DeleteFuncionario(id);
+
+            if (!response.Sucesso)
+                return BadRequest(response.Mensagem);
+
+            return Ok(response);
         }
     }
 }
