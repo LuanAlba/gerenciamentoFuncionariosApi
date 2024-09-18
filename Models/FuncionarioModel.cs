@@ -7,6 +7,9 @@ namespace gerenciamentoFuncionariosApi.Models
     {
         [Key]
         public int Id { get; set; }
+
+        [Required]
+        public string Nome { get; set; } = string.Empty;
         public string CPF { get; set; } = string.Empty;
         public string Telefone { get; set; } = string.Empty;
         public int Salario { get; set; }
