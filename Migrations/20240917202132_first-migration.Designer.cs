@@ -13,7 +13,7 @@ namespace gerenciamentoFuncionariosApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240917202132_first-migration")]
-    partial class firstmigration
+    partial class Firstmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
