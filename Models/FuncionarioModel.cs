@@ -17,8 +17,9 @@ namespace gerenciamentoFuncionariosApi.Models
         public TurnoEnum Turno { get; set; }
         public DateTime Admissao { get; set; } = DateTime.Now;
         public DateTime? AlteradoEm { get; set; } = null;
-        public Endereco? Endereco { get; set; }
-        public CargoModel? Cargo { get; set; }
+        public int? CargoId { get; set; }
+
+        public virtual Endereco? Endereco { get; set; }
 
         public FuncionarioModel()
         {
