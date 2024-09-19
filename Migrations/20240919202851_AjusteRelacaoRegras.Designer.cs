@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using gerenciamentoFuncionariosApi.DataContext;
 
@@ -11,9 +12,11 @@ using gerenciamentoFuncionariosApi.DataContext;
 namespace gerenciamentoFuncionariosApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240919202851_AjusteRelacaoRegras")]
+    partial class AjusteRelacaoRegras
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,18 +62,11 @@ namespace gerenciamentoFuncionariosApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FuncionarioId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Pais")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FuncionarioId")
-                        .IsUnique()
-                        .HasFilter("[FuncionarioId] IS NOT NULL");
 
                     b.ToTable("Enderecos");
                 });
@@ -99,6 +95,9 @@ namespace gerenciamentoFuncionariosApi.Migrations
                     b.Property<int?>("CargoId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("EnderecoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -117,14 +116,11 @@ namespace gerenciamentoFuncionariosApi.Migrations
 
                     b.HasIndex("CargoId");
 
-                    b.ToTable("Funcionarios");
-                });
+                    b.HasIndex("EnderecoId")
+                        .IsUnique()
+                        .HasFilter("[EnderecoId] IS NOT NULL");
 
-            modelBuilder.Entity("gerenciamentoFuncionariosApi.Models.Endereco", b =>
-                {
-                    b.HasOne("gerenciamentoFuncionariosApi.Models.FuncionarioModel", null)
-                        .WithOne("Endereco")
-                        .HasForeignKey("gerenciamentoFuncionariosApi.Models.Endereco", "FuncionarioId");
+                    b.ToTable("Funcionarios");
                 });
 
             modelBuilder.Entity("gerenciamentoFuncionariosApi.Models.FuncionarioModel", b =>
@@ -132,6 +128,12 @@ namespace gerenciamentoFuncionariosApi.Migrations
                     b.HasOne("gerenciamentoFuncionariosApi.Models.CargoModel", null)
                         .WithMany("Funcionarios")
                         .HasForeignKey("CargoId");
+
+                    b.HasOne("gerenciamentoFuncionariosApi.Models.Endereco", "Endereco")
+                        .WithOne("Funcionario")
+                        .HasForeignKey("gerenciamentoFuncionariosApi.Models.FuncionarioModel", "EnderecoId");
+
+                    b.Navigation("Endereco");
                 });
 
             modelBuilder.Entity("gerenciamentoFuncionariosApi.Models.CargoModel", b =>
@@ -139,9 +141,9 @@ namespace gerenciamentoFuncionariosApi.Migrations
                     b.Navigation("Funcionarios");
                 });
 
-            modelBuilder.Entity("gerenciamentoFuncionariosApi.Models.FuncionarioModel", b =>
+            modelBuilder.Entity("gerenciamentoFuncionariosApi.Models.Endereco", b =>
                 {
-                    b.Navigation("Endereco");
+                    b.Navigation("Funcionario");
                 });
 #pragma warning restore 612, 618
         }
