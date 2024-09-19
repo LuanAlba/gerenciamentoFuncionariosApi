@@ -33,6 +33,17 @@ namespace gerenciamentoFuncionariosApi.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{id}")]
+        public ActionResult<ServiceResponse<FuncionarioModel>> GetFuncionarioById(int id)
+        {
+            var response = _funcionarioInterface.GetFuncionarioById(id);
+
+            if (!response.Sucesso)
+                return BadRequest(response.Mensagem);
+
+            return Ok(response);
+        }
+
         [HttpPost]
         public async Task<ActionResult<FuncionarioModel>> CreateFuncionario(FuncionarioModel novoFuncionario)
         {
@@ -44,10 +55,21 @@ namespace gerenciamentoFuncionariosApi.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<ServiceResponse<FuncionarioModel>> GetFuncionarioById(int id)
+        [HttpPut]
+        public async Task<ActionResult<FuncionarioModel>> UpdateFuncionario(FuncionarioModel novoFuncionario)
         {
-            var response = _funcionarioInterface.GetFuncionarioById(id);
+            var response = await _funcionarioInterface.EditFuncionario(novoFuncionario);
+
+            if (!response.Sucesso)
+                return BadRequest(response.Mensagem);
+
+            return Ok(response);
+        }
+
+        [HttpPatch("inativarFuncionario")]
+        public ActionResult<FuncionarioModel> InativarFuncionario(int id)
+        {
+            var response  = _funcionarioInterface.InativaFuncionario(id);
 
             if (!response.Sucesso)
                 return BadRequest(response.Mensagem);

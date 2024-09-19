@@ -10,7 +10,7 @@ namespace gerenciamentoFuncionariosApi.Service.FuncionarioService
         ServiceResponse<FuncionarioModel> GetFuncionarioById(int id);
         Task<ServiceResponse<FuncionarioModel>> CreateFuncionario(FuncionarioModel novoFuncionario);
         Task<ServiceResponse<FuncionarioModel>> EditFuncionario(FuncionarioModel editadoFuncionario);
-        Task<ServiceResponse<FuncionarioModel>> InativaFuncionario(int id);
+        ServiceResponse<FuncionarioModel> InativaFuncionario(int id);
         ServiceResponse<FuncionarioModel> DeleteFuncionario(int id);
     }
 }

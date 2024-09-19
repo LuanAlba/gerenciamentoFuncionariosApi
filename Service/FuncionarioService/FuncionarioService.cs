@@ -37,6 +37,32 @@ namespace gerenciamentoFuncionariosApi.Service.FuncionarioService
             return serviceResponse;
         }
 
+        public ServiceResponse<FuncionarioModel> GetFuncionarioById(int id)
+        {
+            ServiceResponse<FuncionarioModel> serviceResponse = new ServiceResponse<FuncionarioModel>();
+
+            try
+            {
+                FuncionarioModel funcionario = _context.Funcionarios.SingleOrDefault(o => o.Id == id)!;
+
+                if (funcionario == null)
+                {
+                    serviceResponse.Data = null;
+                    serviceResponse.Mensagem = "Usuário não localizado!";
+                    serviceResponse.Sucesso = false;
+                }
+
+                serviceResponse.Data = funcionario;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Mensagem = ex.Message;
+                serviceResponse.Sucesso = false;
+            }
+
+            return serviceResponse;
+        }
+        
         public async Task<ServiceResponse<FuncionarioModel>> CreateFuncionario(FuncionarioModel novoFuncionario)
         {
             ServiceResponse<FuncionarioModel> serviceResponse = new ServiceResponse<FuncionarioModel>();
@@ -67,25 +93,26 @@ namespace gerenciamentoFuncionariosApi.Service.FuncionarioService
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<FuncionarioModel>> EditFuncionario(FuncionarioModel editadoFuncionario)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ServiceResponse<FuncionarioModel> GetFuncionarioById(int id)
+        public async Task<ServiceResponse<FuncionarioModel>> EditFuncionario(FuncionarioModel editadoFuncionario)
         {
             ServiceResponse<FuncionarioModel> serviceResponse = new ServiceResponse<FuncionarioModel>();
 
             try
             {
-                FuncionarioModel funcionario = _context.Funcionarios.SingleOrDefault(o => o.Id == id)!;
+                FuncionarioModel funcionario = _context.Funcionarios.AsNoTracking().FirstOrDefault(o => o.Id == editadoFuncionario.Id)!;
 
                 if (funcionario == null)
                 {
-                    serviceResponse.Data = null;
-                    serviceResponse.Mensagem = "Usuário não localizado!";
+                    serviceResponse.Mensagem = "Funcionário não localizado";
                     serviceResponse.Sucesso = false;
+
+                    return serviceResponse;
                 }
+
+                funcionario.AlteradoEm = DateTime.Now.ToLocalTime();
+
+                _context.Funcionarios.Update(editadoFuncionario);
+                await _context.SaveChangesAsync();
 
                 serviceResponse.Data = funcionario;
             }
@@ -98,9 +125,39 @@ namespace gerenciamentoFuncionariosApi.Service.FuncionarioService
             return serviceResponse;
         }
 
-        public Task<ServiceResponse<FuncionarioModel>> InativaFuncionario(int id)
+        
+
+        public ServiceResponse<FuncionarioModel> InativaFuncionario(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<FuncionarioModel> serviceResponse = new ServiceResponse<FuncionarioModel>();
+
+            try
+            {
+                FuncionarioModel funcionario = _context.Funcionarios.SingleOrDefault(o => o.Id == id)!;
+
+                if (funcionario == null)
+                {
+                    serviceResponse.Mensagem = "Funcionário não localizado";
+                    serviceResponse.Sucesso = false;
+
+                    return serviceResponse;
+                }
+
+                funcionario.Ativo = false;
+                funcionario.AlteradoEm = DateTime.Now.ToLocalTime();
+
+                _context.Funcionarios.Update(funcionario);
+                _context.SaveChanges();
+
+                serviceResponse.Data = funcionario;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Mensagem = ex.Message;
+                serviceResponse.Sucesso = false;
+            }
+
+            return serviceResponse;
         }
 
         public ServiceResponse<FuncionarioModel> DeleteFuncionario(int id)
