@@ -35,6 +35,13 @@ namespace gerenciamentoFuncionariosApi.DataContext
                 .HasOne(o => o.Endereco)
                 .WithOne()
                 .HasForeignKey<Endereco>(o => o.FuncionarioId);
+
+            //Esse trecho resolve no caso da necessidade onde ao fazer a exclusão, a chave FuncionarioId impede a exclusão
+            //Nesse caso foi resolvido diretamente na service pois com certeza da regra, o registro de endereço deve ser excluído juntamente ao funcionário
+            // modelBuilder.Entity<FuncionarioModel>()
+            //     .HasOne(o => o.Endereco)
+            //     .WithOne()
+            //     .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

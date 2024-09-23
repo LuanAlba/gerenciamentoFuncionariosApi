@@ -62,7 +62,7 @@ namespace gerenciamentoFuncionariosApi.Service.FuncionarioService
 
             return serviceResponse;
         }
-        
+
         public async Task<ServiceResponse<FuncionarioModel>> CreateFuncionario(FuncionarioModel novoFuncionario)
         {
             ServiceResponse<FuncionarioModel> serviceResponse = new ServiceResponse<FuncionarioModel>();
@@ -125,7 +125,7 @@ namespace gerenciamentoFuncionariosApi.Service.FuncionarioService
             return serviceResponse;
         }
 
-        
+
 
         public ServiceResponse<FuncionarioModel> InativaFuncionario(int id)
         {
@@ -177,11 +177,19 @@ namespace gerenciamentoFuncionariosApi.Service.FuncionarioService
                     return serviceResponse;
                 }
 
-                _context.Funcionarios.Remove(funcionario);
-                _context.SaveChanges();
+                var enderecoFuncionario = _context.Funcionarios.Include(o => o.Endereco).FirstOrDefault(o => o.Id == id);
 
-                serviceResponse.Data = funcionario;
-                serviceResponse.Mensagem = "Funcionário excluído!";
+                if (enderecoFuncionario != null)
+                {
+                    // Deletar todos os endereços associados
+                    _context.Enderecos.RemoveRange(funcionario.Endereco!);
+                }
+
+                    _context.Funcionarios.Remove(funcionario);
+                    _context.SaveChanges();
+
+                    serviceResponse.Data = funcionario;
+                    serviceResponse.Mensagem = "Funcionário excluído!";
             }
             catch (Exception ex)
             {
