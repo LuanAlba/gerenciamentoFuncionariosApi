@@ -137,6 +137,13 @@ namespace gerenciamentoFuncionariosApi.Service.CargoService
                     return serviceResponse;
                 }
 
+                var cargoFuncionarios = _context.Funcionarios.Where(o => o.CargoId == id);
+
+                foreach (var funcionario in cargoFuncionarios)
+                {
+                    funcionario.CargoId = null;
+                }
+
                 _context.Cargos.Remove(cargo);
                 _context.SaveChanges();
 
