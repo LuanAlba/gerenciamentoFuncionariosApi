@@ -5,7 +5,7 @@ namespace gerenciamentoFuncionariosApi.Enums
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TurnoEnum
     {
-        Manhã = 1,
+        Manha = 1,
         Tarde,
         Noite
     }
