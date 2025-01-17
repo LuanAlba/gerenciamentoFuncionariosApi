@@ -177,9 +177,9 @@ namespace gerenciamentoFuncionariosApi.Service.FuncionarioService
                     return serviceResponse;
                 }
 
-                var enderecoFuncionario = _context.Funcionarios.Include(o => o.Endereco).FirstOrDefault(o => o.Id == id);
+                // var enderecoFuncionario = _context.Funcionarios.Include(o => o.Endereco).FirstOrDefault(o => o.Id == id);
 
-                if (enderecoFuncionario != null)
+                if (funcionario.Endereco != null)
                 {
                     // Deletar todos os endereços associados
                     _context.Enderecos.RemoveRange(funcionario.Endereco!);
