@@ -111,7 +111,7 @@ namespace gerenciamentoFuncionariosApi.Service.FuncionarioService
 
                 funcionario.AlteradoEm = DateTime.Now.ToLocalTime();
 
-                _context.Funcionarios.Update(editadoFuncionario);
+                _context.Funcionarios.Update(funcionario);
                 await _context.SaveChangesAsync();
 
                 serviceResponse.Data = funcionario;
