@@ -1,6 +1,7 @@
 using gerenciamentoFuncionariosApi.Models;
 using gerenciamentoFuncionariosApi.Service.FuncionarioService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace gerenciamentoFuncionariosApi.Controllers
 {
@@ -10,27 +11,42 @@ namespace gerenciamentoFuncionariosApi.Controllers
     {
         //Injeção da dependência
         private readonly IFuncionarioService _funcionarioInterface;
+        private readonly IMemoryCache _cache;
 
-        public FuncionarioController(IFuncionarioService funcionarioInterface)
+        public FuncionarioController(IFuncionarioService funcionarioInterface, IMemoryCache cache)
         {
             _funcionarioInterface = funcionarioInterface;
+            _cache = cache;
         }
 
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<FuncionarioModel>>>> GetFuncionarios()
         {
-            // return Ok(await _funcionarioInterface.GetFuncionarios());
-            var response = await _funcionarioInterface.GetFuncionarios();
-            if (!response.Sucesso)
+
+            const string cacheKey = "funcionarios";
+
+            if (!_cache.TryGetValue(cacheKey, out ServiceResponse<List<FuncionarioModel>> funcionarios))
             {
-                if (response.Data == null || response.Data.Count == 0)
+                funcionarios = await _funcionarioInterface.GetFuncionarios();
+
+                if (!funcionarios.Sucesso)
                 {
-                    return BadRequest("Nenhum dado encontrado.");
+                    if (funcionarios.Data == null || funcionarios.Data.Count == 0)
+                    {
+                        return BadRequest("Nenhum dado encontrado.");
+                    }
+                    return BadRequest(funcionarios.Mensagem);
                 }
-                return BadRequest(response.Mensagem);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(3)
+                };
+
+                _cache.Set(cacheKey, funcionarios, cacheEntryOptions);
             }
 
-            return Ok(response);
+            return Ok(funcionarios);
         }
 
         [HttpGet("{id}")]
@@ -69,7 +85,7 @@ namespace gerenciamentoFuncionariosApi.Controllers
         [HttpPatch("inativarFuncionario")]
         public ActionResult<FuncionarioModel> InativarFuncionario(int id)
         {
-            var response  = _funcionarioInterface.InativaFuncionario(id);
+            var response = _funcionarioInterface.InativaFuncionario(id);
 
             if (!response.Sucesso)
                 return BadRequest(response.Mensagem);
@@ -80,7 +96,7 @@ namespace gerenciamentoFuncionariosApi.Controllers
         [HttpDelete]
         public ActionResult<ServiceResponse<FuncionarioModel>> DeleteFuncionario(int id)
         {
-            var response  = _funcionarioInterface.DeleteFuncionario(id);
+            var response = _funcionarioInterface.DeleteFuncionario(id);
 
             if (!response.Sucesso)
                 return BadRequest(response.Mensagem);
